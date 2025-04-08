@@ -1,0 +1,288 @@
+{
+    "engine": {
+        "fixtures": [
+            {
+                "manufacturer": "GENERIC",
+                "model": "genericRGB",
+                "mode": "grb",
+                "quantity": 120,
+                "universe": 0
+            },
+            {
+                "manufacturer": "GENERIC",
+                "model": "genericRGB",
+                "mode": "dimmerRgb",
+                "quantity": 2,
+                "universe": 4
+            }
+        ],
+        "groups": {
+            "main": {
+                "quantity": 1,
+                "direction": "normal"
+            },
+            "side": {
+                "quantity": 12,
+                "direction": "doublesAscents"
+            },
+            "line": {
+                "quantity": 3,
+                "direction": "doublesDescents"
+            }
+        },
+        "functions": {
+            "main": {
+                "algorithm": "plasma",
+                "duration": 10
+            },
+            "side": {
+                "algorithm": "audio",
+                "duration": 5
+            },
+            "line": {
+                "algorithm": "waves",
+                "color": [
+                    4278190335,
+                    4289331455,
+                    4294901760
+                ],
+                "duration": [
+                    5,
+                    5,
+                    5
+                ]
+            },
+            "colorWaves": {
+                "algorithm": "waves",
+                "color": [
+                    4294901760,
+                    4278190335
+                ],
+                "duration": 5,
+                "direction": [
+                    "right",
+                    "left"
+                ],
+                "names": [
+                    "RedWaves",
+                    "BlueWaves"
+                ],
+                "quantity": 2
+            },
+            "flash": {
+                "algorithm": "randomSingle",
+                "color": 4294967295,
+                "duration": 10,
+                "quantity": 1
+            },
+            "gazebo": {
+                "algorithm": "plasmaColors",
+                "color1Index": [
+                    "Green",
+                    "Pink",
+                    "Violet",
+                    "Violet"
+                ],
+                "color2Index": [
+                    "Seafoam",
+                    "Red",
+                    "Indigo",
+                    "Indigo"
+                ],
+                "color3Index": [
+                    "Teal",
+                    "Orange",
+                    "Orange",
+                    "Hot Pink"
+                ],
+                "color4Index": [
+                    "Purple",
+                    "Cyan",
+                    "Purple",
+                    "Deep Pink"
+                ],
+                "stepsize": [
+                    35,
+                    25,
+                    25,
+                    25
+                ],
+                "ramp": [
+                    30,
+                    15,
+                    15,
+                    15
+                ],
+                "duration": [
+                    200,
+                    200,
+                    200,
+                    200
+                ],
+                "quantity": 4
+            },
+            "gazeboMusic": {
+                "algorithm": "gradient",
+                "duration": 59,
+                "quantity": 1
+            },
+            "gazeboBlack": {
+                "algorithm": "plain",
+                "duration": 59,
+                "quantity": 1
+            }
+        }
+    },
+    "virtualConsole": {
+        "main": {
+            "slider": {
+                "enable": true,
+                "min": 0,
+                "max": 255,
+                "type": "normal",
+                "midi": 0
+            },
+            "speedDial": {
+                "enable": true,
+                "min": 1,
+                "max": 100,
+                "midi": 1
+            }
+        },
+        "side": {
+            "slider": {
+                "enable": true,
+                "min": 0,
+                "max": 255,
+                "type": "doubleSwitch",
+                "midi": [
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13
+                ]
+            }
+        },
+        "line": {
+            "slider": {
+                "enable": true,
+                "min": 0,
+                "max": 255,
+                "type": "normal",
+                "midi": [
+                    14,
+                    15,
+                    16
+                ]
+            },
+            "speedDial": {
+                "enable": true,
+                "min": 1,
+                "max": 100,
+                "midi": [
+                    17,
+                    18,
+                    19
+                ]
+            }
+        },
+        "colorWaves": {
+            "slider": {
+                "enable": true,
+                "min": 0,
+                "max": 255,
+                "type": "normal",
+                "midi": [
+                    20,
+                    21
+                ]
+            },
+            "speedDial": {
+                "enable": true,
+                "min": 1,
+                "max": 100,
+                "midi": [
+                    22,
+                    23
+                ]
+            }
+        },
+        "flash": {
+            "slider": {
+                "enable": true,
+                "min": 0,
+                "max": 255,
+                "switch": "button",
+                "midi": 24
+            },
+            "speedDial": {
+                "enable": false,
+                "min": 10,
+                "max": 500,
+                "midi": 25
+            }
+        },
+        "gazebo": {
+            "button": {
+                "enable": true,
+                "intensity": {
+                    "value": 100,
+                    "adjust": "False"
+                },
+                "midi": [
+                    26,
+                    27,
+                    28,
+                    29
+                ]
+            }
+        },
+        "gazeboMusic": {
+            "button": {
+                "enable": true,
+                "intensity": {
+                    "value": 20,
+                    "adjust": "True"
+                },
+                "midi": 30
+            }
+        },
+        "gazeboBlack": {
+            "button": {
+                "enable": true,
+                "intensity": {
+                    "value": 100,
+                    "adjust": "False"
+                },
+                "midi": 31
+            }
+        },
+        "parRGB": {
+            "slider": {
+                "enable": true,
+                "min": 0,
+                "max": 255,
+                "switch": "normal",
+                "midi": [32, 33, 34]
+            }
+        },
+        "lineFiller": {
+            "button": {
+                "enable": true,
+                "intensity": {
+                    "value": 100,
+                    "adjust": "False"
+                },
+                "midi": 35
+            }
+        }
+    }
+}

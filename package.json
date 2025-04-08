@@ -1,0 +1,12 @@
+{
+  "name": "qlcplus-project-builder",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "Rekss",
+  "license": "ISC",
+  "dependencies": {
+    "xml-js": "^1.6.11"
+  },
+  "type": "module"
+}
