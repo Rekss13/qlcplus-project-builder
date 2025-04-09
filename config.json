@@ -289,6 +289,7 @@
                 "enable": true,
                 "min": 0,
                 "max": 255,
+                "value": 255,
                 "switch": "button",
                 "midi": 36
             }
