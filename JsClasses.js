@@ -128,7 +128,7 @@ export class JsFunctionAudioSpectrum extends JsDir {
             new JsField({ MonoColor: 4294901760 }),
             new JsField({ EndColor: 4278255360 }),
             new JsField({ ControlMode: FixtureMode.rgb }),
-            new JsField({ FixtureGroup: fixtureGroupId }),
+            new JsField({ FixtureGroup: fixtureGroupId })
         ]);
         this.attributes = { ID: id, Type: 'RGBMatrix', Name: `${name}Group${id}AudioSpectrum${duration}ms` };
     }
@@ -160,7 +160,7 @@ export class JsFunctionRandomSingle extends JsDir {
             new JsFieldAttribute({ Algorithm: 'Random Single', attributes: { Type: 'Script' } }),
             new JsField({ MonoColor: monoColor }),
             new JsField({ ControlMode: FixtureMode.rgb }),
-            new JsField({ FixtureGroup: fixtureGroupId }),
+            new JsField({ FixtureGroup: fixtureGroupId })
         ]);
         this.attributes = { ID: id, Type: 'RGBMatrix', Name: `${name}Group${id}RandomSingle${duration}ms` };
     }
@@ -199,7 +199,7 @@ export class JsFunctionPlasmaGradient extends JsDir {
             new JsField({ FixtureGroup: fixtureGroupId }),
             new JsAttribute({ Property: { Name: 'orientation', Value: 'Vertical' } }),
             new JsAttribute({ Property: { Name: 'presetIndex', Value: 'Rainbow' } }),
-            new JsAttribute({ Property: { Name: 'presetSize', Value: 5 } }),
+            new JsAttribute({ Property: { Name: 'presetSize', Value: 5 } })
         ]);
         this.attributes = { ID: id, Type: 'RGBMatrix', Name: `${name}Group${id}PlasmaColor${duration}ms` };
     }
@@ -216,7 +216,7 @@ export class JsFunctionPlasmaPlain extends JsDir {
             new JsField({ FixtureGroup: fixtureGroupId }),
             new JsAttribute({ Property: { Name: 'stepsize', Value: 25 } }),
             new JsAttribute({ Property: { Name: 'presetSize', Value: 5 } }),
-            new JsAttribute({ Property: { Name: 'ramp', Value: 15 } }),
+            new JsAttribute({ Property: { Name: 'ramp', Value: 15 } })
         ]);
         this.attributes = { ID: id, Type: 'RGBMatrix', Name: `${name}Group${id}PlasmaColor${duration}ms` };
     }
@@ -262,7 +262,7 @@ export class JsSliderPlayback extends JsDir {
             new JsAttribute({ Input: { Universe: 0, Channel: midi } }),
             new JsFieldAttribute({ SliderMode: 'Playback', attributes: { ValueDisplayStyle: 'Exact', ClickAndGoType: 'None' } }),
             new JsAttribute({ Level: { LowLimit: 0, HighLimit: 255, Value: 0 } }),
-            new JsDir('Playback', new JsField({ Function: fixtureGroupId })),
+            new JsDir('Playback', new JsField({ Function: fixtureGroupId }))
         ]);
         this.attributes = { Caption: name, ID: id, WidgetStyle: 'Slider', InvertedAppearance: false };
     }
@@ -291,7 +291,7 @@ export class JsSliderLevel extends JsDir {
     }
 }
 export class JsSliderSubmaster extends JsDir {
-    constructor(id = 0, name = `SliderSubmaster${id}`, backgroundColor = 'Default', x = 75, y = 55) {
+    constructor(id = 0, name = `SliderSubmaster${id}`, backgroundColor = 'Default', x = 75, y = 55, value = 22, midi) {
         super('Slider', [
             new JsAttribute({ WindowState: { Visible: "True", X: x, Y: y, Width: 60, Height: 200 } }),
             new JsDir('Appearance', [
@@ -301,10 +301,14 @@ export class JsSliderSubmaster extends JsDir {
                 new JsField({ BackgroundImage: 'None' }),
                 new JsField({ Font: 'Default' })
             ]),
-            new JsFieldAttribute({ SliderMode: 'Submaster', attributes: { ValueDisplayStyle: 'Exact', ClickAndGoType: 'None' } }),
-            new JsAttribute({ Level: { LowLimit: 0, HighLimit: 255, Value: 22 } }),
-            new JsDir('Playback', new JsField({ Function: 4294967295 })),
-        ]);
+
+        ].concat(midi ? [new JsAttribute({ Input: { Universe: 0, Channel: midi } })] : [])
+            .concat([
+                new JsFieldAttribute({ SliderMode: 'Submaster', attributes: { ValueDisplayStyle: 'Exact', ClickAndGoType: 'None' } }),
+                new JsAttribute({ Level: { LowLimit: 0, HighLimit: 255, Value: value } }),
+                new JsDir('Playback', new JsField({ Function: 4294967295 }))
+            ])
+        );
         this.attributes = { Caption: name, ID: id, WidgetStyle: 'Slider', InvertedAppearance: false };
     }
 }

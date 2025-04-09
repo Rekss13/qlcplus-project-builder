@@ -10,11 +10,6 @@ import {
 } from './JsClasses.js';
 import FixtureModels from './fixtureModels.js';
 
-// const count = process.argv.length > 2 ? process.argv[2] - 0 : 80;
-const host = "192.168.1.162";
-// const side = (process.argv.length > 3 && (process.argv[3] - 0) % 2 === 0) ? process.argv[3] - 0 : 4;
-// const line = (process.argv.length > 3 && count % process.argv[4] === 0) ? process.argv[4] - 0 : 0;
-
 let config = {};
 
 const copyObject = serializable => JSON.parse(JSON.stringify(serializable, 'utf8'));
@@ -87,12 +82,7 @@ const writeXml = () => {
             .concat(quantityLine > 0 ? new Array(quantityLine).fill({}).map((_item, index) => {
                 return index % 2 === 0 ? getReversFixtureGroup(index + quantityMain + quantitySide, quantity.grb / quantityLine, index * (quantity.grb / quantityLine), "Part") : getFixtureGroup(index + quantityMain + quantitySide, quantity.grb / quantityLine, index * (quantity.grb / quantityLine), "Part");
             }) : []);
-        const line = config.engine.functions.line;
-        const colorWaves = config.engine.functions.colorWaves;
-        const flash = config.engine.functions.flash;
-        const gazebo = config.engine.functions.gazebo;
-        const gazeboMusic = config.engine.functions.gazeboMusic;
-        const gazeboBlack = config.engine.functions.gazeboBlack;
+        const { line, colorWaves, flash, gazebo, gazeboMusic, gazeboBlack } = config.engine.functions;
         const functions = [new JsFunctionPlasmaRainbow(undefined, undefined, undefined, "Main")]
             .concat(new Array(quantitySide).fill({}).map((_item, index) => new JsFunctionAudioSpectrum(index + quantityMain, index + quantityMain, undefined, "Audio")))
             .concat(quantityLine > 0 ? new Array(quantityLine).fill({}).map((_item, index) => new JsFunctionWaves(index + quantityMain + quantitySide, index + quantityMain + quantitySide, line.color[index], false, line.duration[index], "Part")) : [])
@@ -110,39 +100,52 @@ const writeXml = () => {
         const quantityMain = config.engine.groups.main.quantity;
         const quantitySide = config.engine.groups.side.quantity;
         const quantityLine = config.engine.groups.line.quantity;
-        const side = config.virtualConsole.side;
-        const line = config.virtualConsole.line;
+        const { side, line, colorWaves, flash } = config.virtualConsole;
         const functionColorWaves = config.engine.functions.colorWaves;
-        const colorWaves = config.virtualConsole.colorWaves;
-        const flash = config.virtualConsole.flash;
         const functionFlash = config.engine.functions.flash;
         const midiParRGB = [, ...config.virtualConsole.parRGB.slider.midi];
         const sliders = [new JsSliderPlayback()]
             .concat(new Array(quantitySide).fill({}).map((_item, index) => new JsSliderPlayback(index + quantityMain, `Group${index + 1}AudioSpectrum`, index + quantityMain, 4292730333, (index + quantityMain) * 75, 265, side.slider.midi[index] + 128)))
             .concat(new Array(quantityLine).fill({}).map((_item, index) => new JsSliderPlayback(index + quantitySide + quantityMain, `Group${index + quantitySide + 1}Waves`, index + quantitySide + quantityMain, undefined, index * 300 + 75, 475, line.slider.midi[index] + 128)))
             .concat(functionColorWaves.names.map((name, index) => new JsSliderPlayback(index + quantitySide + quantityLine + quantityMain, name, index + quantitySide + quantityLine + 1, undefined, (index + 1) * 300 + 75, undefined, colorWaves.slider.midi[index] + 128)))
-            .concat(new JsSliderPlayback(quantityMain + quantitySide + quantityLine + functionColorWaves.quantity, 'Flash', quantityMain + quantitySide + quantityLine + functionColorWaves.quantity, undefined, (functionColorWaves.quantity + quantityMain) * 300 + 75, undefined, flash.slider.midi + 128))
-            .concat([
-                { name: 'Dimmer', value: 255, channel: 0 },
-                { name: 'Red', value: 0, channel: 1 },
-                { name: 'Green', value: 0, channel: 2 },
-                { name: 'Blue', value: 0, channel: 3 }
-            ].map((item, index) => new JsSliderLevel(index + quantityMain + quantitySide + quantityLine + functionColorWaves.quantity + 1, item.name, undefined, quantityLine * 300 + index * 75 + 75, 475, item.value, item.channel, [120, 121], midiParRGB[index] + 128)));
+            .concat(new JsSliderPlayback(quantityMain + quantitySide + quantityLine + functionColorWaves.quantity, 'Flash', quantityMain + quantitySide + quantityLine + functionColorWaves.quantity, undefined, (functionColorWaves.quantity + quantityMain) * 300 + 75, undefined, flash.slider.midi + 128));
         const functionLine = config.engine.functions.line;
         const speedDials = [new JsSpeedDial(sliders.length, undefined, 0, undefined, undefined, undefined, config.virtualConsole.main.speedDial.min, config.virtualConsole.main.speedDial.max, config.engine.functions.main.duration)]
             .concat(new Array(quantityLine).fill({}).map((_item, index) => new JsSpeedDial(index + sliders.length + quantityMain, `Group${index + quantitySide + 1}Waves`, index + quantitySide + quantityMain, undefined, index * 300 + 150, 475, line.speedDial.min, line.speedDial.max, functionLine.duration[index], line.speedDial.midi[index] + 128)))
             .concat(functionColorWaves.names.map((name, index) => new JsSpeedDial(index + sliders.length + quantityLine + quantityMain, name, index + quantitySide + quantityLine + quantityMain, undefined, (index + 1) * 300 + 150, undefined, colorWaves.speedDial.min, colorWaves.speedDial.max, functionColorWaves.duration, colorWaves.speedDial.midi[index] + 128)))
             .concat(new JsSpeedDial(sliders.length + quantityLine + functionColorWaves.quantity + quantityMain, 'Flash', quantitySide + quantityLine + functionColorWaves.quantity + quantityMain, undefined, (functionColorWaves.quantity + quantityMain) * 300 + 150, undefined, flash.speedDial.min, flash.speedDial.max, functionFlash.duration, flash.speedDial.midi + 128));
-        const labels = ['Main', 'Sides', 'Sfx'].map((label, index) => new JsLabel(index + sliders.length + speedDials.length, label, label == 'Sides' ? 4292730333 : undefined, index * 210 + 55));
+        const labels = ['Sides', 'Sfx'].map((label, index) => new JsLabel(index + sliders.length + speedDials.length, label, label == 'Sides' ? 4292730333 : undefined, (index + 1) * 210 + 55));
+        let idCounter = sliders.length + speedDials.length + labels.length;
+        const midiMainFrame = config.virtualConsole.mainframe.slider.midi;
+        const mainframe = [{
+            ...new JsAttribute({ Frame: { Caption: "", ID: idCounter++ } }),
+            elements: [
+                new JsFields({ Appearance: [{ FrameStyle: "Sunken" }, { ForegroundColor: "Default" }, { BackgroundColor: "Default" }, { BackgroundImage: "None" }, { Font: "Default" }] }),
+                new JsAttribute({ WindowState: { Visible: "True", X: 15, Y: 15, Width: (functionColorWaves.quantity + quantityMain + 1) * 300 + 73, Height: (labels.length + 1) * 210 + 56 } }),
+                new JsField({ AllowChildren: 'True' }),
+                new JsField({ AllowResize: 'True' }),
+                new JsField({ ShowHeader: 'True' }),
+                new JsField({ ShowEnableButton: 'True' }),
+                new JsField({ Collapsed: 'False' }),
+                new JsField({ Disabled: 'False' }),
+                new JsSliderSubmaster(idCounter++, "Submaster", undefined, 5, 55, 255, midiMainFrame + 128)
+            ].concat(sliders).concat(speedDials).concat(labels)
+        }];
+        const parSlides = [
+            { name: 'Dimmer', value: 255, channel: 0 },
+            { name: 'Red', value: 0, channel: 1 },
+            { name: 'Green', value: 0, channel: 2 },
+            { name: 'Blue', value: 0, channel: 3 }
+        ].map((item, index) => new JsSliderLevel(idCounter++, item.name, undefined, quantityLine * 300 + index * 75 + 90, 490, item.value, item.channel, [120, 121], midiParRGB[index] + 128))
         const quantityGazebo = config.engine.functions.gazebo.quantity;
         const gazebo = config.virtualConsole.gazebo.button;
         const gazeboMusic = config.virtualConsole.gazeboMusic.button;
         const gazeboBlack = config.virtualConsole.gazeboBlack.button;
         const soloFrame = [{
-            ...new JsAttribute({ SoloFrame: { Caption: "", ID: sliders.length + speedDials.length + labels.length } }),
+            ...new JsAttribute({ SoloFrame: { Caption: "", ID: idCounter++ } }),
             elements: [
                 new JsFields({ Appearance: [{ FrameStyle: "Sunken" }, { ForegroundColor: "Default" }, { BackgroundColor: "Default" }, { BackgroundImage: "None" }, { Font: "Default" }] }),
-                new JsAttribute({ WindowState: { Visible: "True", X: (functionColorWaves.quantity + quantityMain + functionFlash.quantity) * 300 + 75, Y: 55, Width: 95, Height: 470 } }),
+                new JsAttribute({ WindowState: { Visible: "True", X: (functionColorWaves.quantity + quantityMain + functionFlash.quantity) * 300 + 100, Y: 15, Width: 95, Height: 470 } }),
                 new JsField({ AllowChildren: 'True' }),
                 new JsField({ AllowResize: 'True' }),
                 new JsField({ ShowHeader: 'True' }),
@@ -150,26 +153,26 @@ const writeXml = () => {
                 new JsField({ Mixing: 'False' }),
                 new JsField({ Collapsed: 'False' }),
                 new JsField({ Disabled: 'False' }),
-            ].concat(new Array(quantityGazebo).fill({}).map((_item, index) => new JsButton(index + sliders.length + speedDials.length + labels.length + 1, `Gazebo${index + 1}`, index + quantityMain + quantitySide + quantityLine + functionColorWaves.quantity + functionFlash.quantity, 24, (index + 1) * 65, gazebo.intensity.value, gazebo.intensity.adjust, gazebo.midi[index] + 128)))
+            ].concat(new Array(quantityGazebo).fill({}).map((_item, index) => new JsButton(idCounter++, `Gazebo${index + 1}`, index + quantityMain + quantitySide + quantityLine + functionColorWaves.quantity + functionFlash.quantity, 24, (index + 1) * 65, gazebo.intensity.value, gazebo.intensity.adjust, gazebo.midi[index] + 128)))
                 .concat([
-                    new JsButton(sliders.length + speedDials.length + labels.length + quantityGazebo + 1, `GazeboMusic`, quantityMain + quantitySide + quantityLine + functionColorWaves.quantity + functionFlash.quantity + quantityGazebo, 24, (quantityGazebo + 1) * 65, gazeboMusic.intensity.value, gazeboMusic.intensity.adjust, gazeboMusic.midi + 128),
-                    new JsButton(sliders.length + speedDials.length + labels.length + quantityGazebo + 2, `GazeboBlack`, quantityMain + quantitySide + quantityLine + functionColorWaves.quantity + functionFlash.quantity + quantityGazebo + 1, 24, (quantityGazebo + 2) * 65, gazeboBlack.intensity.value, gazeboBlack.intensity.adjust, gazeboBlack.midi + 128)
+                    new JsButton(idCounter++, `GazeboMusic`, quantityMain + quantitySide + quantityLine + functionColorWaves.quantity + functionFlash.quantity + quantityGazebo, 24, (quantityGazebo + 1) * 65, gazeboMusic.intensity.value, gazeboMusic.intensity.adjust, gazeboMusic.midi + 128),
+                    new JsButton(idCounter++, `GazeboBlack`, quantityMain + quantitySide + quantityLine + functionColorWaves.quantity + functionFlash.quantity + quantityGazebo + 1, 24, (quantityGazebo + 2) * 65, gazeboBlack.intensity.value, gazeboBlack.intensity.adjust, gazeboBlack.midi + 128)
                 ])
         }];
         let midiLineFiller = config.virtualConsole.lineFiller.button.midi;
         const frame = [{
-            ...new JsAttribute({ Frame: { Caption: "", ID: sliders.length + speedDials.length + labels.length + 3 + quantityGazebo } }),
+            ...new JsAttribute({ Frame: { Caption: "", ID: idCounter++ } }),
             elements: [
                 new JsFields({ Appearance: [{ FrameStyle: "Sunken" }, { ForegroundColor: "Default" }, { BackgroundColor: "Default" }, { BackgroundImage: "None" }, { Font: "Default" }] }),
-                new JsAttribute({ WindowState: { Visible: "True", X: (functionColorWaves.quantity + quantityMain + functionFlash.quantity) * 300 + 185, Y: 55, Width: 180, Height: 470 } }),
+                new JsAttribute({ WindowState: { Visible: "True", X: (functionColorWaves.quantity + quantityMain + functionFlash.quantity) * 300 + 207, Y: 15, Width: 180, Height: 470 } }),
                 new JsField({ AllowChildren: 'True' }),
                 new JsField({ AllowResize: 'True' }),
                 new JsField({ ShowHeader: 'True' }),
                 new JsField({ ShowEnableButton: 'True' }),
                 new JsField({ Collapsed: 'False' }),
                 new JsField({ Disabled: 'False' }),
-                new JsSliderSubmaster(sliders.length + speedDials.length + labels.length + 4 + quantityGazebo, "Submaster", undefined, 24, 65),
-                new JsButton(sliders.length + speedDials.length + labels.length + 5 + quantityGazebo, "Sequence", sequenceId, 106, 65, undefined, undefined, midiLineFiller + 128)
+                new JsSliderSubmaster(idCounter++, "Submaster", undefined, 24, 65),
+                new JsButton(idCounter, "Sequence", sequenceId, 106, 65, undefined, undefined, midiLineFiller + 128)
             ]
         }];
         return new JsDir('VirtualConsole', [
@@ -177,7 +180,7 @@ const writeXml = () => {
                 ...new JsAttribute({ Frame: { Caption: "" } }),
                 elements: [
                     new JsFields({ Appearance: [{ FrameStyle: "None" }, { ForegroundColor: "Default" }, { BackgroundColor: "Default" }, { BackgroundImage: "None" }, { Font: "Default" }] }),
-                ].concat(sliders.concat(speedDials).concat(labels).concat(soloFrame).concat(frame))
+                ].concat(mainframe.concat(parSlides).concat(soloFrame).concat(frame))
             },
             new JsAttributes({
                 Properties:
@@ -190,31 +193,31 @@ const writeXml = () => {
     const xml = js2xml(getJsObj([getEngine(getFixtures()), getVirtualConsole(), simpleDesk]), options);
     // console.log(xml);
     fs.writeFile(`project.qxw`, xml, 'utf8', (error, stdout, stderr) => {
-        console.log(!error ? 'Completed successfully' : error);
+        console.log(error || 'Completed successfully');
     });
 }
 
 const checkData = (quantity, side, line) => {
-    console.log(quantity, side, line)
     return quantity % side === 0 && side % 2 === 0 && quantity % line === 0;
 }
 
 const configFromJSON = data => {
-    // try {
-    config = copyObject(JSON.parse(data));
-    if (checkData(config.engine.fixtures[0].quantity, config.engine.groups.side.quantity, config.engine.groups.line.quantity)) writeXml();
-    // } catch (e) {
-    //     if (e.name == 'SyntaxError') {
-    //         config = copyObject({});
-    //     } else {
-    //         console.log(`Error (${e.name}) in data received from device_conf file`);
-    //         throw e;
-    //     }
-    // }
+    try {
+        config = copyObject(JSON.parse(data));
+        if (checkData(config.engine.fixtures[0].quantity, config.engine.groups.side.quantity, config.engine.groups.line.quantity)) {
+            writeXml();
+        }
+    } catch (e) {
+        if (e.name == 'SyntaxError') {
+            config = copyObject({});
+        } else {
+            console.log(`Error (${e.name}) in data received from device_conf file`);
+            throw e;
+        }
+    }
 }
 
 fs.readFile(`${process.cwd()}/config.json`, 'utf-8', (error, data) => {
-    console.log(error, data)
     if (error) {
         if (error.message.indexOf('no such file or directory' < 0)) {
             config = copyObject({});

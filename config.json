@@ -283,6 +283,15 @@
                 },
                 "midi": 35
             }
+        },
+        "mainframe": {
+            "slider": {
+                "enable": true,
+                "min": 0,
+                "max": 255,
+                "switch": "button",
+                "midi": 36
+            }
         }
     }
 }
